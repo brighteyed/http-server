@@ -1,6 +1,8 @@
 # http-server
 Simple static file server with idle tracking
 
+## Basic command line usage
+
 ```
 Usage of http-server:
   -d string
@@ -11,7 +13,8 @@ Usage of http-server:
         duration before shutdown while inactive (0 – disable)
 ```
 
-Application supports multiple served locations that should be configured in the `config.yml` (`~/.config/http-server/config.yml`). In this case root directory specified via command line arguments ignored
+## Configuration
+Application supports multiple served locations that should be configured in the `config.yml` (`~/.config/http-server/config.yml`)
 
 ```
 locations:
@@ -20,3 +23,5 @@ locations:
     - path: "/doc/"
       root: "/var/www/doc"
 ```
+
+In this case root directory specified via command line arguments ignored
