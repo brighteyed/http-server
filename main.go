@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/brighteyed/http-server/config"
 	"github.com/brighteyed/http-server/tracker"
 )
 
@@ -15,7 +16,18 @@ func main() {
 	idleDuration := flag.Uint("t", 0, "duration before shutdown while inactive (0 – disable)")
 	flag.Parse()
 
-	http.Handle("/", http.FileServer(http.Dir(*root)))
+	appCfg := config.LoadConfig("/", *root)
+	if appCfg == nil {
+		log.Fatal("Error loading application configuration")
+	}
+
+	for i := 0; i < len(appCfg.Locations); i++ {
+		path := appCfg.Locations[i].Path
+		root := appCfg.Locations[i].Root
+
+		http.Handle(path, http.StripPrefix(path, http.FileServer(http.Dir(root))))
+		log.Printf("Serving %q as %q\n", root, path)
+	}
 
 	idleConnsClosed := make(chan struct{})
 
@@ -26,7 +38,7 @@ func main() {
 	go func() {
 		<-idleTracker.Done()
 
-		log.Println("Shutting down...")
+		log.Println("Shutting down")
 		if err := srv.Shutdown(context.Background()); err != nil {
 			log.Fatalf("Shutdown, %v", err)
 		}
@@ -34,7 +46,6 @@ func main() {
 		close(idleConnsClosed)
 	}()
 
-	log.Printf("Serving %s on HTTP port: %s\n", *root, *port)
 	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
 		log.Fatalf("ListenAndServer, %v", err)
 	}
