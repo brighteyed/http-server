@@ -1,0 +1,40 @@
+version: '3'
+
+env:
+  GOOS: "{{OS}}"
+  
+vars:
+  APPNAME: http-server
+  EXEFILE: http-server{{exeExt}}
+
+
+includes:
+  build: ./BuildTaskfile.yml
+  os: ./Taskfile_{{OS}}.yml
+
+tasks:
+  build:
+    cmds:
+      - task: build:default
+
+  clean:
+    cmds:
+      - task: os:clean
+
+  run:
+    deps: [build]
+    cmds:
+      - ./{{.EXEFILE}}
+    ignore_error: true
+
+  release:
+    cmds:
+      - task: build:x64
+      - minizip -o ./release/{{.APPNAME}}_{{.GOOS}}_amd64_{{.GIT_COMMIT}}.zip {{.EXEFILE}}
+      - task: clean
+      - task: build:x86
+      - minizip -o ./release/{{.APPNAME}}_{{.GOOS}}_386_{{.GIT_COMMIT}}.zip {{.EXEFILE}}
+      - task: clean
+    vars:
+      GIT_COMMIT:
+        sh: git log -n 1 --format=%h

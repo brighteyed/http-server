@@ -1,0 +1,6 @@
+version: '3'
+
+tasks:
+  clean:
+    cmds:
+      - cmd /c del {{.EXEFILE}}
