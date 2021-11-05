@@ -3,10 +3,7 @@ package config
 import (
 	"io/ioutil"
 	"log"
-	"os"
-	"path/filepath"
 
-	"github.com/OpenPeeDeeP/xdg"
 	"gopkg.in/yaml.v2"
 )
 
@@ -21,48 +18,38 @@ type AppConfig struct {
 	Locations []Location `yaml:"locations"`
 }
 
-func newDefaultConfig(path string, root string) *AppConfig {
-	return &AppConfig{Locations: []Location{
-		{Path: path, Root: root},
-	}}
-}
-
-// LoadConfig loads application config from yaml or uses default args
+// LoadConfig loads application config from yaml files or uses default args
 // as fallback
 func LoadConfig(defaultPath string, defaultRoot string) *AppConfig {
-	configFile, err := configFile()
-	if err != nil {
-		log.Printf("Looking for config file, %v", err)
-		return nil
-	}
-
-	content, err := ioutil.ReadFile(configFile)
-	if err != nil {
-		log.Println("Can't read config file. Using default root to serve")
-		return newDefaultConfig(defaultPath, defaultRoot)
-	}
+	configFiles := configFiles()
 
 	cfg := AppConfig{}
-	if err := yaml.Unmarshal(content, &cfg); err != nil {
-		log.Printf("Can't parse config file. Using default root to serve, %v", err)
+
+	for _, config := range configFiles {
+		content, err := ioutil.ReadFile(config)
+		if err != nil {
+			log.Printf("Can't read config file %q\n", config)
+			continue
+		}
+
+		curr := AppConfig{}
+		if err := yaml.Unmarshal(content, &curr); err != nil {
+			log.Printf("Can't parse config file %q, %v", config, err)
+			continue
+		}
+
+		cfg.Locations = append(cfg.Locations, curr.Locations...)
+	}
+
+	if len(cfg.Locations) == 0 {
 		return newDefaultConfig(defaultPath, defaultRoot)
 	}
 
 	return &cfg
 }
 
-// configFile returns a path to the application config file
-func configFile() (string, error) {
-	folder, err := findOrCreateConfigDir()
-	if err != nil {
-		return "", err
-	}
-
-	return filepath.Join(folder, "config.yml"), nil
-}
-
-// findOrCreateConfigDir ensures application config directory exists
-func findOrCreateConfigDir() (string, error) {
-	folder := xdg.New("", "http-server").ConfigHome()
-	return folder, os.MkdirAll(folder, 0755)
+func newDefaultConfig(path string, root string) *AppConfig {
+	return &AppConfig{Locations: []Location{
+		{Path: path, Root: root},
+	}}
 }
