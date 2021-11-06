@@ -10,7 +10,6 @@ vars:
 
 includes:
   build: ./BuildTaskfile.yml
-  os: ./Taskfile_{{OS}}.yml
 
 tasks:
   build:
@@ -19,7 +18,7 @@ tasks:
 
   clean:
     cmds:
-      - task: os:clean
+      - go clean
 
   run:
     deps: [build]
@@ -28,6 +27,7 @@ tasks:
     ignore_error: true
 
   release:
+    deps: [clean]
     cmds:
       - task: build:x64
       - minizip -o ./release/{{.APPNAME}}_{{.GOOS}}_amd64_{{.GIT_COMMIT}}.zip {{.EXEFILE}}
