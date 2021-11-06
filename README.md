@@ -4,7 +4,7 @@ Simple static file server with idle tracking
 ## Basic command line usage
 
 ```
-Usage of http-server:
+$ Usage of http-server:
   -d string
         the directory of files to host (default ".")
   -p string
@@ -14,8 +14,11 @@ Usage of http-server:
 ```
 
 ## Configuration
-Application supports multiple served locations that should be configured in the `config.yml` (`~/.config/http-server/config.yml`)
+Application supports multiple served locations. Configuration is loaded from all yaml files placed in `http-server` subdirectory of `XDG_DATA_DIRS` or `XDG_CONFIG_HOME` directories.
 
+In this case root directory specified via command line arguments ignored
+
+### Example
 ```
 locations:
     - path: "/example/"
@@ -24,4 +27,3 @@ locations:
       root: "/var/www/doc"
 ```
 
-In this case root directory specified via command line arguments ignored
