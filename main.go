@@ -5,6 +5,8 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
 
 	"github.com/brighteyed/http-server/config"
 	"github.com/brighteyed/http-server/tracker"
@@ -29,6 +31,12 @@ func main() {
 		log.Printf("Serving %q as %q\n", root, path)
 	}
 
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, os.Interrupt)
+	defer func() {
+		signal.Stop(signalChan)
+	}()
+
 	idleConnsClosed := make(chan struct{})
 
 	idleTracker := tracker.NewIdleTracker(*idleDuration)
@@ -36,11 +44,11 @@ func main() {
 	srv.ConnState = idleTracker.ConnState
 
 	go func() {
-		<-idleTracker.Done()
-
-		log.Println("Shutting down")
-		if err := srv.Shutdown(context.Background()); err != nil {
-			log.Fatalf("Shutdown, %v", err)
+		select {
+		case <-idleTracker.Done():
+			shutdown(&srv)
+		case <-signalChan:
+			shutdown(&srv)
 		}
 
 		close(idleConnsClosed)
@@ -52,4 +60,11 @@ func main() {
 
 	// Wait until Shutdown returns
 	<-idleConnsClosed
+}
+
+func shutdown(srv *http.Server) {
+	log.Println("Shutting down")
+	if err := srv.Shutdown(context.Background()); err != nil {
+		log.Fatalf("Shutdown, %v", err)
+	}
 }
