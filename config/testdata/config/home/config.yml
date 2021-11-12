@@ -1,0 +1,3 @@
+locations:
+  - path: /faq/
+    root: /path/to/faq

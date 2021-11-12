@@ -1,0 +1,5 @@
+locations:
+  - path: /notes/
+    root: /path/to/notes
+  - path: /tasks/
+    root: /path/to/tasks
