@@ -21,8 +21,10 @@ type AppConfig struct {
 // LoadConfig loads application config from yaml files or uses default args
 // as fallback
 func LoadConfig(defaultPath string, defaultRoot string) *AppConfig {
-	configFiles := configFiles()
+	return loadConfig(defaultPath, defaultRoot, configFiles(configDirs()))
+}
 
+func loadConfig(defaultPath string, defaultRoot string, configFiles []string) *AppConfig {
 	cfg := AppConfig{}
 
 	for _, config := range configFiles {

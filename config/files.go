@@ -11,9 +11,9 @@ import (
 const Vendor = ""
 
 // configFiles returns an array of application config files
-func configFiles() []string {
+func configFiles(dirs []string) []string {
 	var appConfigFiles []string
-	for _, dir := range configDirs() {
+	for _, dir := range dirs {
 		files, err := findConfigFiles(dir)
 		if err == nil {
 			appConfigFiles = append(appConfigFiles, files...)
