@@ -9,10 +9,10 @@ tasks:
     env:
       GOARCH: "amd64"
     cmds:
-      - go build -o {{.EXEFILE}} main.go
+      - go build -o {{.EXEFILE}}
 
   x86:
     env:
       GOARCH: "386"
     cmds:
-      - go build -o {{.EXEFILE}} main.go
+      - go build -o {{.EXEFILE}}
