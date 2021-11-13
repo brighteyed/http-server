@@ -11,8 +11,8 @@ import (
 	"github.com/brighteyed/http-server/tracker"
 )
 
-func run(root *string, idleDuration *uint, port *string) {
-	appCfg := config.LoadConfig("/", *root)
+func run(root string, port string, idleDuration uint) {
+	appCfg := config.NewAppConfig(root)
 	if appCfg == nil {
 		log.Fatal("Error loading application configuration")
 	}
@@ -33,8 +33,8 @@ func run(root *string, idleDuration *uint, port *string) {
 
 	idleConnsClosed := make(chan struct{})
 
-	idleTracker := tracker.NewIdleTracker(*idleDuration)
-	srv := http.Server{Addr: ":" + *port}
+	idleTracker := tracker.NewIdleTracker(idleDuration)
+	srv := http.Server{Addr: ":" + port}
 	srv.ConnState = idleTracker.ConnState
 
 	go func() {

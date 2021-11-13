@@ -1,12 +1,50 @@
 package config
 
 import (
+	"io/ioutil"
+	"log"
 	"reflect"
 	"testing"
 )
 
-func TestNewDefaultConfig(t *testing.T) {
-	got := newDefaultConfig("path", "root")
+func TestNewAppConfig(t *testing.T) {
+	t.Run("return config with specified root", func(t *testing.T) {
+		got := newAppConfig("/path/to/notes", []string{"testdata/config/data/config.yml"})
+
+		if got == nil {
+			t.Fatalf("want AppConfig, got nil")
+		}
+
+		expected := &AppConfig{Locations: []Location{
+			{"/", "/path/to/notes"},
+		}}
+
+		if !reflect.DeepEqual(expected, got) {
+			t.Errorf("expected %v, got %v", expected, got)
+		}
+	})
+
+	t.Run("return config loaded from files", func(t *testing.T) {
+		got := newAppConfig("", []string{"testdata/config/data/config.yml"})
+
+		if got == nil {
+			t.Fatalf("want AppConfig, got nil")
+		}
+
+		expected := &AppConfig{
+			Locations: []Location{
+				{"/notes/", "/path/to/notes"},
+				{"/tasks/", "/path/to/tasks"},
+			}}
+
+		if !reflect.DeepEqual(expected, got) {
+			t.Errorf("expected %v, got %v", expected, got)
+		}
+	})
+}
+
+func TestNewConfig(t *testing.T) {
+	got := newConfig("path", "root")
 
 	if len(got.Locations) != 1 {
 		t.Fatalf("expected exactly 1 location, got %d", len(got.Locations))
@@ -21,9 +59,11 @@ func TestNewDefaultConfig(t *testing.T) {
 	}
 }
 
-func TestLoadConfig(t *testing.T) {
+func TestLoadFromFiles(t *testing.T) {
+	log.SetOutput(ioutil.Discard)
+
 	t.Run("1 configuration file", func(t *testing.T) {
-		got := loadConfig("path", "root", []string{"testdata/config/data/config.yml"})
+		got := loadFromFiles("path", "root", []string{"testdata/config/data/config.yml"})
 
 		if got == nil {
 			t.Fatalf("want AppConfig, got nil")
@@ -41,7 +81,7 @@ func TestLoadConfig(t *testing.T) {
 	})
 
 	t.Run("2 configuration files", func(t *testing.T) {
-		got := loadConfig("path", "root",
+		got := loadFromFiles("path", "root",
 			[]string{
 				"testdata/config/data/config.yml",
 				"testdata/config/home/config.yml",
@@ -64,7 +104,7 @@ func TestLoadConfig(t *testing.T) {
 	})
 
 	t.Run("empty configuration file", func(t *testing.T) {
-		got := loadConfig("path", "root",
+		got := loadFromFiles("path", "root",
 			[]string{
 				"testdata/config/home/err.yml",
 			})
@@ -73,7 +113,7 @@ func TestLoadConfig(t *testing.T) {
 			t.Fatalf("want AppConfig, got nil")
 		}
 
-		expected := newDefaultConfig("path", "root")
+		expected := newConfig("path", "root")
 
 		if !reflect.DeepEqual(expected, got) {
 			t.Errorf("expected %v, got %v", expected, got)
@@ -81,7 +121,7 @@ func TestLoadConfig(t *testing.T) {
 	})
 
 	t.Run("malformed configuration file", func(t *testing.T) {
-		got := loadConfig("path", "root",
+		got := loadFromFiles("path", "root",
 			[]string{
 				"testdata/config/Config.YML",
 			})
@@ -90,7 +130,7 @@ func TestLoadConfig(t *testing.T) {
 			t.Fatalf("want AppConfig, got nil")
 		}
 
-		expected := newDefaultConfig("path", "root")
+		expected := newConfig("path", "root")
 
 		if !reflect.DeepEqual(expected, got) {
 			t.Errorf("expected %v, got %v", expected, got)
