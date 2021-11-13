@@ -18,13 +18,34 @@ type AppConfig struct {
 	Locations []Location `yaml:"locations"`
 }
 
-// LoadConfig loads application config from yaml files or uses default args
-// as fallback
-func LoadConfig(defaultPath string, defaultRoot string) *AppConfig {
-	return loadConfig(defaultPath, defaultRoot, configFiles(configDirs()))
+// NewAppConfig returns server configuration that is defined by root or
+// (if root is empty) loaded from configuration files
+func NewAppConfig(root string) *AppConfig {
+	return newAppConfig(root, configFiles(configDirs()))
 }
 
-func loadConfig(defaultPath string, defaultRoot string, configFiles []string) *AppConfig {
+// newConfig loads config from files if root is empty. Otherwise it  returns
+// config with one location defined by root
+func newAppConfig(root string, configFiles []string) *AppConfig {
+	var appCfg *AppConfig
+	if root == "" {
+		appCfg = loadFromFiles("/", ".", configFiles)
+	} else {
+		appCfg = newConfig("/", root)
+	}
+	return appCfg
+}
+
+// newConfig returns application configuration with one location
+func newConfig(path string, root string) *AppConfig {
+	return &AppConfig{Locations: []Location{
+		{Path: path, Root: root},
+	}}
+}
+
+// loadFromFiles merges all locations from configuration files. If no locations were loaded
+// it returns location with specified defaultRoot and defaultPath
+func loadFromFiles(defaultPath string, defaultRoot string, configFiles []string) *AppConfig {
 	cfg := AppConfig{}
 
 	for _, config := range configFiles {
@@ -44,14 +65,8 @@ func loadConfig(defaultPath string, defaultRoot string, configFiles []string) *A
 	}
 
 	if len(cfg.Locations) == 0 {
-		return newDefaultConfig(defaultPath, defaultRoot)
+		return newConfig(defaultPath, defaultRoot)
 	}
 
 	return &cfg
-}
-
-func newDefaultConfig(path string, root string) *AppConfig {
-	return &AppConfig{Locations: []Location{
-		{Path: path, Root: root},
-	}}
 }
