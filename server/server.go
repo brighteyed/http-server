@@ -3,6 +3,8 @@ package server
 import (
 	"log"
 	"net/http"
+	"path/filepath"
+	"strings"
 
 	"github.com/brighteyed/http-server/config"
 )
@@ -21,7 +23,13 @@ func NewHandler(locations []config.Location) *Handler {
 		path := locations[i].Path
 		root := locations[i].Root
 
-		router.Handle(path, http.StripPrefix(path, http.FileServer(http.Dir(root))))
+		if strings.ToLower(filepath.Ext(root)) != ".zip" {
+			router.Handle(path, http.StripPrefix(path, http.FileServer(http.Dir(root))))
+		} else {
+			h := NewZipHandler(root)
+			router.Handle(path, http.StripPrefix(path, http.HandlerFunc(h.GetFile)))
+		}
+
 		log.Printf("Serving %q as %q\n", root, path)
 	}
 
