@@ -43,6 +43,7 @@ func (z *ZipHandler) GetFile(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	defer file.Close()
 
 	info, err := file.Stat()
 	if err != nil {
@@ -62,6 +63,7 @@ func (z *ZipHandler) GetFile(w http.ResponseWriter, r *http.Request) {
 			}
 			return
 		}
+		defer file.Close()
 	}
 
 	bytes, err := io.ReadAll(file)
