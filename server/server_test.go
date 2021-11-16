@@ -122,6 +122,7 @@ func TestZipHandle(t *testing.T) {
 
 		gotStatusCode := response.Result().StatusCode
 		assertStatusCode(t, gotStatusCode, 200)
+		assertContentType(t, response.Header().Get("Content-Type"), "text/html; charset=utf-8")
 		assertContent(t, response.Body, "testdata/index.html")
 	})
 }

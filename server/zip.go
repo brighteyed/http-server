@@ -72,7 +72,7 @@ func (z *ZipHandler) GetFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctype := mime.TypeByExtension(filepath.Ext(r.URL.Path))
+	ctype := mime.TypeByExtension(filepath.Ext(path))
 	if ctype == "" {
 		ctype = http.DetectContentType(bytes)
 	}
