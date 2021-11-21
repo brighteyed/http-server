@@ -7,7 +7,7 @@ import (
 )
 
 func TestFindConfigFiles(t *testing.T) {
-	got, err := findConfigFiles("testdata/config")
+	got, err := findConfigFiles("testdata")
 
 	if err != nil {
 		t.Fatalf("got an unexpected error")
@@ -25,7 +25,7 @@ func TestFindConfigFiles(t *testing.T) {
 }
 
 func TestConfigFiles(t *testing.T) {
-	got := configFiles([]string{"testdata/config/data", "testdata/config/home"})
+	got := configFiles([]string{"testdata/data", "testdata/home"})
 
 	if len(got) != 3 {
 		t.Errorf("expected 3 files, got %d", len(got))

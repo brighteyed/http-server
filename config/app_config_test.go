@@ -9,7 +9,7 @@ import (
 
 func TestNewAppConfig(t *testing.T) {
 	t.Run("return config with specified root", func(t *testing.T) {
-		got := newAppConfig("/path/to/notes", []string{"testdata/config/data/config.yml"})
+		got := newAppConfig("/path/to/notes", []string{"testdata/data/config.yml"})
 
 		if got == nil {
 			t.Fatalf("want AppConfig, got nil")
@@ -25,7 +25,7 @@ func TestNewAppConfig(t *testing.T) {
 	})
 
 	t.Run("return config loaded from files", func(t *testing.T) {
-		got := newAppConfig("", []string{"testdata/config/data/config.yml"})
+		got := newAppConfig("", []string{"testdata/data/config.yml"})
 
 		if got == nil {
 			t.Fatalf("want AppConfig, got nil")
@@ -63,7 +63,7 @@ func TestLoadFromFiles(t *testing.T) {
 	log.SetOutput(ioutil.Discard)
 
 	t.Run("1 configuration file", func(t *testing.T) {
-		got := loadFromFiles("path", "root", []string{"testdata/config/data/config.yml"})
+		got := loadFromFiles("path", "root", []string{"testdata/data/config.yml"})
 
 		if got == nil {
 			t.Fatalf("want AppConfig, got nil")
@@ -83,8 +83,8 @@ func TestLoadFromFiles(t *testing.T) {
 	t.Run("2 configuration files", func(t *testing.T) {
 		got := loadFromFiles("path", "root",
 			[]string{
-				"testdata/config/data/config.yml",
-				"testdata/config/home/config.yml",
+				"testdata/data/config.yml",
+				"testdata/home/config.yml",
 			})
 
 		if got == nil {
@@ -106,7 +106,7 @@ func TestLoadFromFiles(t *testing.T) {
 	t.Run("empty configuration file", func(t *testing.T) {
 		got := loadFromFiles("path", "root",
 			[]string{
-				"testdata/config/home/err.yml",
+				"testdata/home/err.yml",
 			})
 
 		if got == nil {
@@ -123,7 +123,7 @@ func TestLoadFromFiles(t *testing.T) {
 	t.Run("malformed configuration file", func(t *testing.T) {
 		got := loadFromFiles("path", "root",
 			[]string{
-				"testdata/config/Config.YML",
+				"testdata/Config.YML",
 			})
 
 		if got == nil {
