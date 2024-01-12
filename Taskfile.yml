@@ -30,10 +30,10 @@ tasks:
     deps: [clean]
     cmds:
       - task: build:x64
-      - minizip -o ./release/{{.APPNAME}}_{{.GOOS}}_amd64_{{.GIT_COMMIT}}.zip {{.EXEFILE}}
+      - 7z a -tzip ./release/{{.APPNAME}}_{{.GOOS}}_amd64_{{.GIT_COMMIT}}.zip {{.EXEFILE}}
       - task: clean
       - task: build:x86
-      - minizip -o ./release/{{.APPNAME}}_{{.GOOS}}_386_{{.GIT_COMMIT}}.zip {{.EXEFILE}}
+      - 7z a -tzip ./release/{{.APPNAME}}_{{.GOOS}}_386_{{.GIT_COMMIT}}.zip {{.EXEFILE}}
       - task: clean
     vars:
       GIT_COMMIT:
