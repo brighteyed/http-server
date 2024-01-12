@@ -14,15 +14,17 @@ import (
 )
 
 func main() {
+	var headers server.HeaderList
 	root := flag.String("d", "", "the directory of files to host")
 	port := flag.String("p", "8100", "port to serve on")
 	idle := flag.Uint("t", 0, "duration before shutdown while inactive (0 – disable)")
+	flag.Var(&headers, "header", "add header in 'name: value' format")
 	flag.Parse()
 
-	run(*root, *port, *idle)
+	run(*root, *port, *idle, headers)
 }
 
-func run(root string, port string, idleDuration uint) {
+func run(root string, port string, idleDuration uint, headers server.HeaderList) {
 	appCfg := config.NewAppConfig(root)
 	if appCfg == nil {
 		log.Fatal("Error loading application configuration")
@@ -39,7 +41,7 @@ func run(root string, port string, idleDuration uint) {
 
 	srv := http.Server{
 		Addr:      ":" + port,
-		Handler:   server.NewHandler(appCfg.Locations),
+		Handler:   server.AddHeaders(headers, server.NewHandler(appCfg.Locations)),
 		ConnState: idleTracker.ConnState,
 	}
 

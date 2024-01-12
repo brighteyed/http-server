@@ -7,10 +7,13 @@ Simple http server with idle tracking. It can serve local files and contents of 
 $ Usage of http-server:
   -d string
         the directory of files to host
+  -header value
+        add header in 'name: value' format        
   -p string
         port to serve on (default "8100")
   -t uint
         duration before shutdown while inactive (0 – disable)
+  
 ```
 
 ## Configuration
