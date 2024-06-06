@@ -1,8 +1,8 @@
 package config
 
 import (
-	"io/ioutil"
 	"log"
+	"os"
 
 	"gopkg.in/yaml.v2"
 )
@@ -49,7 +49,7 @@ func loadFromFiles(defaultPath string, defaultRoot string, configFiles []string)
 	cfg := AppConfig{}
 
 	for _, config := range configFiles {
-		content, err := ioutil.ReadFile(config)
+		content, err := os.ReadFile(config)
 		if err != nil {
 			log.Printf("Can't read config file %q\n", config)
 			continue

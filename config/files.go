@@ -1,7 +1,7 @@
 package config
 
 import (
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -35,7 +35,7 @@ func configDirs() []string {
 // findConfigFiles returns an array of application config files
 func findConfigFiles(root string) ([]string, error) {
 	var userConfigFiles []string
-	fileInfos, err := ioutil.ReadDir(root)
+	fileInfos, err := os.ReadDir(root)
 	if err != nil {
 		return userConfigFiles, err
 	}

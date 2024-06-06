@@ -1,7 +1,7 @@
 package config
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"reflect"
 	"testing"
@@ -60,7 +60,7 @@ func TestNewConfig(t *testing.T) {
 }
 
 func TestLoadFromFiles(t *testing.T) {
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 
 	t.Run("1 configuration file", func(t *testing.T) {
 		got := loadFromFiles("path", "root", []string{"testdata/data/config.yml"})

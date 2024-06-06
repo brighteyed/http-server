@@ -2,7 +2,7 @@ package server_test
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -14,7 +14,7 @@ import (
 )
 
 func TestFileSystemHandle(t *testing.T) {
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 
 	t.Run("handle existing file", func(t *testing.T) {
 		locations := []config.Location{
@@ -49,7 +49,7 @@ func TestFileSystemHandle(t *testing.T) {
 }
 
 func TestZipHandle(t *testing.T) {
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 
 	t.Run("handle existing file", func(t *testing.T) {
 		locations := []config.Location{
