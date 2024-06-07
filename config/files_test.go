@@ -13,8 +13,8 @@ func TestFindConfigFiles(t *testing.T) {
 		t.Fatalf("got an unexpected error")
 	}
 
-	if len(got) != 4 {
-		t.Errorf("expected 4 files, got %d", len(got))
+	if len(got) != 5 {
+		t.Errorf("expected 5 files, got %d", len(got))
 	}
 
 	for _, file := range got {
@@ -27,8 +27,8 @@ func TestFindConfigFiles(t *testing.T) {
 func TestConfigFiles(t *testing.T) {
 	got := configFiles([]string{"testdata/data", "testdata/home"})
 
-	if len(got) != 3 {
-		t.Errorf("expected 3 files, got %d", len(got))
+	if len(got) != 4 {
+		t.Errorf("expected 4 files, got %d", len(got))
 	}
 }
 

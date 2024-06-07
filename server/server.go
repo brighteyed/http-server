@@ -17,11 +17,17 @@ type Handler struct {
 // NewHandler returns a Handler created by the slice of
 // locations
 func NewHandler(locations []config.Location) *Handler {
+	routes := make(map[string]bool)
 	router := http.NewServeMux()
 
 	for i := 0; i < len(locations); i++ {
 		path := locations[i].Path
 		root := locations[i].Root
+
+		if _, exists := routes[path]; exists {
+			log.Printf("Route %q is already in use\n", path)
+			continue
+		}
 
 		if strings.ToLower(filepath.Ext(root)) != ".zip" {
 			router.Handle(path, http.StripPrefix(path, http.FileServer(http.Dir(root))))
@@ -30,6 +36,7 @@ func NewHandler(locations []config.Location) *Handler {
 			router.Handle(path, http.StripPrefix(path, http.HandlerFunc(h.GetFile)))
 		}
 
+		routes[path] = true
 		log.Printf("Serving %q as %q\n", root, path)
 	}
 

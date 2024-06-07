@@ -18,6 +18,7 @@ func TestFileSystemHandle(t *testing.T) {
 
 	t.Run("handle existing file", func(t *testing.T) {
 		locations := []config.Location{
+			{Path: "/test/", Root: "testdata"},
 			{Path: "/test/", Root: "testdata"}}
 
 		request := mustGetRequest(t, "/test/welcome.html")

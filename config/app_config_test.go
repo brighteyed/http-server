@@ -103,6 +103,28 @@ func TestLoadFromFiles(t *testing.T) {
 		}
 	})
 
+	t.Run("same path in two files", func(t *testing.T) {
+		got := loadFromFiles("path", "root",
+			[]string{
+				"testdata/home/config.yml",
+				"testdata/home/faq.yml",
+			})
+
+		if got == nil {
+			t.Fatalf("want AppConfig, got nil")
+		}
+
+		expected := &AppConfig{
+			Locations: []Location{
+				{"/faq/", "/path/to/faq"},
+				{"/faq/", "/yet/another/path/to/faq"},
+			}}
+
+		if !reflect.DeepEqual(expected, got) {
+			t.Errorf("expected %v, got %v", expected, got)
+		}
+	})
+
 	t.Run("empty configuration file", func(t *testing.T) {
 		got := loadFromFiles("path", "root",
 			[]string{
